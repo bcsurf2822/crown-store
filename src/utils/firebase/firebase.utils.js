@@ -4,6 +4,7 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 
 import { doc, getFirestore, getDoc, setDoc } from "firebase/firestore";
@@ -21,27 +22,29 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
 
 //with this system we now have a way to authenticate & store users
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInfo = {}
+) => {
   // document reference (inside of database, "users collection", with this auth users ID)
   const userDocRef = doc(db, "users", userAuth.uid);
-
-  console.log(userDocRef);
   // The snapshot is the data also a specific kind of obj
   const userSnapShot = await getDoc(userDocRef);
-  console.log("USER SNAPSHOT", userSnapShot);
-  console.log("USER SNAPSHOT Exists?:  ", userSnapShot.exists()); //does this reference exist
 
   // does snapshot exist
   if (!userSnapShot.exists()) {
@@ -53,11 +56,19 @@ export const createUserDocumentFromAuth = async (userAuth) => {
         displayName,
         email,
         createdAt,
+        ...additionalInfo,
       });
     } catch (error) {
-      console.log("error createing the user:", error);
+      console.log("error createing the user:", error.message);
     }
   }
 
   return userDocRef;
+};
+
+// Creating all of these utilities allows you to control how this app  operates with the external service/creates a separation layer between concerns
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
 };
