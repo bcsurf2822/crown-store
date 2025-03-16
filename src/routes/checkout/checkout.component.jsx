@@ -15,7 +15,7 @@ export default function Checkout() {
               <h2>{name}</h2>
               <span>{quantity}</span>
               <br />
-              <span onClick={() => removeItemToCart(cartItem)}>decrement</span>
+              <span onClick={() => removeItemToCart(cartItem)}>decrementt</span>
               <br />
               <span onClick={() => addItemToCart(cartItem)}>increment</span>
             </div>
