@@ -87,4 +87,4 @@ export const signOutUser = async () => await signOut(auth);
 
 //  It passes this callback funciton to the 2nd val of onAuthStateChanged.  It will call this callback whenever the state of our auth singleton changes. SignIN and Out are both changes and the callback will be invoked..  This is an open listener , so it is always listening for changes to the auth state. When it does it will run  the function.
 export const onAuthStateChangedListener = (callback) =>
-  onAuthStateChanged(auth, callback, errorCallback, completedCallback);
+  onAuthStateChanged(auth, callback);

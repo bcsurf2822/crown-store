@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from "react";
 import {
   createUserDocumentFromAuth,
   onAuthStateChangedListener,
-  signOutUser,
 } from "../utils/firebase/firebase.utils";
 
 //Value we want to access
@@ -24,8 +23,7 @@ export const UserProvider = ({ children }) => {
       }
       setCurrentUser(user);
     });
-// By returning the unsubscribe it cleans up the actual method. and often times will call the error or completed if passed which is why it is listed
-
+    // By returning the unsubscribe it cleans up the actual method. and often times will call the error or completed if passed which is why it is listed
     return unsubscribe;
   }, []);
 
