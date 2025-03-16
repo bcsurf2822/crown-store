@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
@@ -7,6 +7,7 @@ import {
 import FormInput from "../form-input/form-input.component";
 import "./sign-in-form.styles.scss";
 import Button from "../button/button.component";
+import { UserContext } from "../../contexts/user.context";
 
 const defaultFormFields = {
   email: "",
@@ -16,7 +17,8 @@ const defaultFormFields = {
 export default function SignInForm() {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
-  console.log("Form Fields", formFields);
+
+  const { setCurrentUser } = useContext(UserContext);
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -31,19 +33,20 @@ export default function SignInForm() {
     e.preventDefault();
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      const { user } = await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
-      console.log("Res", response);
+
+      setCurrentUser(user);
       resetFormFields();
     } catch (error) {
       // the way switch works is similar to an if else statement: if (error.code === case) {
       // do action} if none of the strings matchg the code refer to default
       // NOTE: Google has not provided a list of these error codes
       switch (error.code) {
-        case "auth/wrong-password":
-          alert("incorrect password for email");
+        case "auth/invalid-credential":
+          alert("incorrect credentials");
           break;
         case "auth/user-not-found":
           alert("no user associated with this email");
