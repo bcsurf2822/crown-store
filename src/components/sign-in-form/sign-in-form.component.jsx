@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
@@ -7,7 +7,7 @@ import {
 import FormInput from "../form-input/form-input.component";
 import "./sign-in-form.styles.scss";
 import Button from "../button/button.component";
-import { UserContext } from "../../contexts/user.context";
+
 
 const defaultFormFields = {
   email: "",
@@ -18,7 +18,7 @@ export default function SignInForm() {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
 
-  const { setCurrentUser } = useContext(UserContext);
+
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -26,7 +26,8 @@ export default function SignInForm() {
 
   const signInWithGoogle = async () => {
     const { user } = await signInWithGooglePopup();
-    await createUserDocumentFromAuth(user);
+
+
   };
 
   const handleSubmit = async (e) => {
@@ -38,7 +39,7 @@ export default function SignInForm() {
         password
       );
 
-      setCurrentUser(user);
+
       resetFormFields();
     } catch (error) {
       // the way switch works is similar to an if else statement: if (error.code === case) {

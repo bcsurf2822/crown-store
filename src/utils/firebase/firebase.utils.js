@@ -6,7 +6,8 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import { doc, getFirestore, getDoc, setDoc } from "firebase/firestore";
@@ -82,4 +83,8 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 };
 
 // We make this await because we want to await whatever signOut returns
-export const signOutUser = async () => await signOut(auth)
+export const signOutUser = async () => await signOut(auth);
+
+//  It passes this callback funciton to the 2nd val of onAuthStateChanged.  It will call this callback whenever the state of our auth singleton changes. SignIN and Out are both changes and the callback will be invoked..  This is an open listener , so it is always listening for changes to the auth state. When it does it will run  the function.
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback, errorCallback, completedCallback);
