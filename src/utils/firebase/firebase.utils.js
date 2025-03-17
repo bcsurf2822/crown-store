@@ -10,7 +10,16 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { doc, getFirestore, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getFirestore,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore";
 
 // Obtained from building web app this boilerplate is provided
 const firebaseConfig = {
@@ -38,6 +47,40 @@ export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
+
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey);
+  // transaction: rep a successful unit of work to a db
+  const batch = writeBatch(db);
+
+  // Now that we have the batch intstance we can initiate multiple transactions/set events
+
+  objectsToAdd.forEach((obj) => {
+    const docRef = doc(collectionRef, obj.title.toLowerCase());
+    batch.set(docRef, obj);
+  });
+
+  await batch.commit();
+  console.log("done");
+};
+
+//Get Items From Firestore
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((accumaltor, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    accumaltor[title.toLowerCase()] = items;
+    return accumaltor;
+  }, {});
+  return categoryMap;
+};
 
 //with this system we now have a way to authenticate & store users
 export const createUserDocumentFromAuth = async (
