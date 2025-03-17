@@ -2,7 +2,6 @@ import { Fragment, useContext } from "react";
 import { Outlet } from "react-router-dom";
 
 import CrwnLogo from "../../assets/crown.svg";
-import { UserContext } from "../../contexts/user.context";
 
 import { signOutUser } from "../../utils/firebase/firebase.utils";
 import CartIcon from "../../components/cart-icon/cart-icon.component";
@@ -14,9 +13,11 @@ import {
   NavLink,
   NavLinksContainer,
 } from "./navigation.styles";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../store/user/user.selector";
 
 const Navigation = () => {
-  const { currentUser } = useContext(UserContext);
+  const currentUser = useSelector(selectCurrentUser);
   const { isCartOpen } = useContext(CartContext);
 
   // We want to "await" what signOutUser does
@@ -31,17 +32,13 @@ const Navigation = () => {
         </LogoContainer>
 
         <NavLinksContainer>
-          <NavLink to="/shop">
-            Shop
-          </NavLink>
+          <NavLink to="/shop">Shop</NavLink>
           {currentUser ? (
             <NavLink as="span" onClick={signOutHandler}>
               Sign Out
             </NavLink>
           ) : (
-            <NavLink to="/auth">
-              Sign In
-            </NavLink>
+            <NavLink to="/auth">Sign In</NavLink>
           )}
           <CartIcon />
         </NavLinksContainer>
