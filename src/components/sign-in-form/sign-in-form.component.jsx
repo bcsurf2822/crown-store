@@ -12,7 +12,10 @@ import {
   SignUpContainer,
 } from "./sign-in-form.styles.jsx";
 import { useDispatch } from "react-redux";
-import { googleSignInStart } from "../../store/user/user.action.js";
+import {
+  emailSignInStart,
+  googleSignInStart,
+} from "../../store/user/user.action.js";
 
 const defaultFormFields = {
   email: "",
@@ -36,7 +39,7 @@ export default function SignInForm() {
     e.preventDefault();
 
     try {
-      await signInAuthUserWithEmailAndPassword(email, password);
+      dispatch(emailSignInStart(email, password));
 
       resetFormFields();
     } catch (error) {
