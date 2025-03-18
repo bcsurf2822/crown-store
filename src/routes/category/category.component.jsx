@@ -9,13 +9,13 @@ import { useSelector } from "react-redux";
 import { selectCategoriesMap } from "../../store/categories/categories.selector.js";
 
 export default function Category() {
-  console.log("render/re-rendering category component");
   const { category } = useParams();
+  console.log("render/re-rendering category component");
   const categoriesMap = useSelector(selectCategoriesMap);
   const [products, setProducts] = useState(categoriesMap[category]);
 
   useEffect(() => {
-    console.log("useEffect fired calling setProducts in Cat component");
+    console.log("effect fired calling setProducts");
     setProducts(categoriesMap[category]);
   }, [category, categoriesMap]);
 

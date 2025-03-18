@@ -5,8 +5,10 @@ import CategoryPreview from "../../components/category-preview/category-preview.
 import { useSelector } from "react-redux";
 import { selectCategoriesMap } from "../../store/categories/categories.selector";
 
-export default function CategoriesPreview() {
+
+const CategoriesPreview = () => {
   const categoriesMap = useSelector(selectCategoriesMap);
+
   return (
     <Fragment>
       {Object.keys(categoriesMap).map((title) => {
@@ -17,4 +19,6 @@ export default function CategoriesPreview() {
       })}
     </Fragment>
   );
-}
+};
+
+export default CategoriesPreview;
