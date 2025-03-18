@@ -4,6 +4,7 @@ import logger from "redux-logger";
 import { rootReducer } from "./root-reducer";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { thunk } from "redux-thunk";
 
 // Redux Persist Config
 const persistConfig = {
@@ -15,9 +16,10 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-const middlewares = [import.meta.env.MODE === "development" && logger].filter(
-  Boolean
-); //'production' : will not log !
+const middlewares = [
+  import.meta.env.MODE === "development" && logger,
+  thunk,
+].filter(Boolean); //'production' : will not log !
 
 const composeEnhancer =
   (import.meta.env.MODE === "development" &&
