@@ -20,6 +20,6 @@ export const fetchCategoriesAsync = () => async (dispatch) => {
     const categoriesArray = await getCategoriesAndDocuments("categories");
     dispatch(fetchCategoriesSuccess(categoriesArray));
   } catch (error) {
-    dispatch(fetchCategoriesFailed);
+    dispatch(fetchCategoriesFailed(error));
   }
 };

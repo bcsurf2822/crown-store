@@ -111,7 +111,7 @@ export const createUserDocumentFromAuth = async (
     }
   }
 
-  return userDocRef;
+  return userSnapShot;
 };
 
 // Creating all of these utilities allows you to control how this app  operates with the external service/creates a separation layer between concerns
@@ -133,3 +133,18 @@ export const signOutUser = async () => await signOut(auth);
 //  It passes this callback funciton to the 2nd val of onAuthStateChanged.  It will call this callback whenever the state of our auth singleton changes. SignIN and Out are both changes and the callback will be invoked..  This is an open listener , so it is always listening for changes to the auth state. When it does it will run  the function.
 export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
+
+//SAGA FUNCTIONS
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe();
+        resolve(userAuth);
+      },
+      reject
+    );
+  });
+};

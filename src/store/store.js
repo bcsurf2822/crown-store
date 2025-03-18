@@ -4,7 +4,12 @@ import logger from "redux-logger";
 import { rootReducer } from "./root-reducer";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { thunk } from "redux-thunk";
+// import { thunk } from "redux-thunk";
+
+//mainly want to use 1 redux library saga / thunk
+import createSagaMiddleware from "redux-saga";
+
+import { rootSaga } from "./root-saga";
 
 // Redux Persist Config
 const persistConfig = {
@@ -12,13 +17,16 @@ const persistConfig = {
   // what do we want to store it into
   storage,
   // values that we don't want to persist
-  blacklist: ["user"],
+  whitelist: ["cart"],
 };
+
+const sagaMiddleware = createSagaMiddleware();
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const middlewares = [
   import.meta.env.MODE === "development" && logger,
-  thunk,
+  // thunk,
+  sagaMiddleware,
 ].filter(Boolean); //'production' : will not log !
 
 const composeEnhancer =
@@ -33,4 +41,7 @@ export const store = createStore(
   undefined,
   composedEnhancers
 );
+
+sagaMiddleware.run(rootSaga);
+
 export const persistor = persistStore(store);
