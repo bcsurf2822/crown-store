@@ -14,7 +14,7 @@ export default function Shop() {
   useEffect(() => {
     const getCategoriesMap = async () => {
       const categoriesArray = await getCategoriesAndDocuments("categories");
-      console.log("Categ Arr: ", categoriesArray);
+
       dispatch(setCategories(categoriesArray));
     };
     //invoked method at bottom here

@@ -2,6 +2,9 @@ import { createContext, useState, useReducer } from "react";
 
 import { createAction } from "../utils/reducer/reducer.utils";
 
+const clearCartItem = (cartItems, cartItemToClear) =>
+  cartItems.filter((cartItem) => cartItem.id !== cartItemToClear.id);
+
 const addCartItem = (cartItems, productToAdd) => {
   const existingCartItem = cartItems.find(
     (cartItem) => cartItem.id === productToAdd.id
@@ -65,8 +68,6 @@ const cartReducer = (state, action) => {
   }
 };
 
-const clearCartItem = (cartItems, cartItemToClear) =>
-  cartItems.filter((cartItem) => cartItem.id !== cartItemToClear.id);
 
 export const CartContext = createContext({
   isCartOpen: false,
@@ -88,6 +89,7 @@ export const CartProvider = ({ children }) => {
   );
 
   const updateCartItemsReducer = (cartItems) => {
+
     const newCartCount = cartItems.reduce(
       (total, cartItem) => total + cartItem.quantity,
       0
