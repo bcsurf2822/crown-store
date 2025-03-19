@@ -21,9 +21,8 @@ import {
   signInWithGooglePopup,
   signOutUser,
   AdditionalInformation,
-  // signInWithEmailAndPassword,
+  signInAuthUserWithEmailAndPassword,
 } from "../../utils/firebase/firebase.utils";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 export function* getSnapshotFromUserAuth(
   userAuth: User,
@@ -58,7 +57,11 @@ export function* signInWithEmail({
   payload: { email, password },
 }: EmailSignInStart) {
   try {
-    const data = yield* call(signInWithEmailAndPassword, email, password);
+    const data = yield* call(
+      signInAuthUserWithEmailAndPassword,
+      email,
+      password
+    );
 
     if (data) {
       const { user } = data;
