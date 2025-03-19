@@ -4,7 +4,8 @@ import Category from "../../routes/category/category.component";
 import { CategoriesProvider } from "../../contexts/categories.context";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchCategoriesAsync, fetchCategoriesStart } from "../../store/categories/categories.action";
+import { fetchCategoriesStart } from "../../store/categories/categories.action";
+
 
 export default function Shop() {
   const dispatch = useDispatch();

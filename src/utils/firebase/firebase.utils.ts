@@ -8,6 +8,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  User,
+  NextOrObserver,
 } from "firebase/auth";
 
 import {
@@ -19,7 +21,9 @@ import {
   writeBatch,
   query,
   getDocs,
+  QueryDocumentSnapshot,
 } from "firebase/firestore";
+import { Category } from "../../store/categories/categories.types";
 
 // Obtained from building web app this boilerplate is provided
 const firebaseConfig = {
@@ -48,15 +52,16 @@ export const signInWithGoogleRedirect = () =>
 
 export const db = getFirestore();
 
-export const addCollectionAndDocuments = async (
-  collectionKey,
-  objectsToAdd
-) => {
-  const collectionRef = collection(db, collectionKey);
-  // transaction: rep a successful unit of work to a db
-  const batch = writeBatch(db);
+export type ObjectToAdd = {
+  title: string;
+};
 
-  // Now that we have the batch intstance we can initiate multiple transactions/set events
+export const addCollectionAndDocuments = async <T extends ObjectToAdd>(
+  collectionKey: string,
+  objectsToAdd: T[]
+): Promise<void> => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
 
   objectsToAdd.forEach((obj) => {
     const docRef = doc(collectionRef, obj.title.toLowerCase());
@@ -67,38 +72,38 @@ export const addCollectionAndDocuments = async (
   console.log("done");
 };
 
-//Get Items From Firestore
-
-export const getCategoriesAndDocuments = async () => {
+export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
   const collectionRef = collection(db, "categories");
   const q = query(collectionRef);
 
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((docSnapShot) => docSnapShot.data());
-
-  // .reduce((accumaltor, docSnapshot) => {
-  //   const { title, items } = docSnapshot.data();
-  //   accumaltor[title.toLowerCase()] = items;
-  //   return accumaltor;
-  // }, {});
-  // return categoryMap;
+  return querySnapshot.docs.map(
+    (docSnapShot) => docSnapShot.data() as Category
+  );
 };
 
-//with this system we now have a way to authenticate & store users
+export type AdditionalInformation = {
+  displayName?: string;
+};
+
+export type UserData = {
+  createdAt: Date;
+  displayName: String;
+  email: string;
+};
+
 export const createUserDocumentFromAuth = async (
-  userAuth,
-  additionalInfo = {}
-) => {
-  // document reference (inside of database, "users collection", with this auth users ID)
+  userAuth: User,
+  additionalInfo = {} as AdditionalInformation
+): Promise<void | QueryDocumentSnapshot<UserData>> => {
   const userDocRef = doc(db, "users", userAuth.uid);
-  // The snapshot is the data also a specific kind of obj
+
   const userSnapShot = await getDoc(userDocRef);
 
-  // does snapshot exist
   if (!userSnapShot.exists()) {
     const { displayName, email } = userAuth;
     const createdAt = new Date();
-    //if it does not we want to set it inside of our DB
+
     try {
       await setDoc(userDocRef, {
         displayName,
@@ -107,36 +112,37 @@ export const createUserDocumentFromAuth = async (
         ...additionalInfo,
       });
     } catch (error) {
-      console.log("error createing the user:", error.message);
+      console.log("error createing the user:", error);
     }
   }
 
-  return userSnapShot;
+  return userSnapShot as QueryDocumentSnapshot<UserData>;
 };
 
-// Creating all of these utilities allows you to control how this app  operates with the external service/creates a separation layer between concerns
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
+export const createAuthUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
 
   return await createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+export const signInAuthUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
 
   return await signInWithEmailAndPassword(auth, email, password);
 };
 
-// We make this await because we want to await whatever signOut returns
 export const signOutUser = async () => await signOut(auth);
 
-//  It passes this callback funciton to the 2nd val of onAuthStateChanged.  It will call this callback whenever the state of our auth singleton changes. SignIN and Out are both changes and the callback will be invoked..  This is an open listener , so it is always listening for changes to the auth state. When it does it will run  the function.
-export const onAuthStateChangedListener = (callback) =>
+export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(auth, callback);
 
-//SAGA FUNCTIONS
-
-export const getCurrentUser = () => {
+export const getCurrentUser = (): Promise<User | null> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(
       auth,
