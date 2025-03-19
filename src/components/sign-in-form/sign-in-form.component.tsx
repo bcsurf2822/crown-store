@@ -1,16 +1,14 @@
-import { useState } from "react";
-import {
-  signInAuthUserWithEmailAndPassword,
-  signInWithGooglePopup,
-} from "../../utils/firebase/firebase.utils";
+import { useState, FormEvent, ChangeEvent } from "react";
+
 import FormInput from "../form-input/form-input.component";
-import "./sign-in-form.styles.jsx";
+import "./sign-in-form.styles.js";
 import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 import {
   ButtonsContainer,
   H2,
+  SignInContainer,
   SignUpContainer,
-} from "./sign-in-form.styles.jsx";
+} from "./sign-in-form.styles.js";
 import { useDispatch } from "react-redux";
 import {
   emailSignInStart,
@@ -35,7 +33,7 @@ export default function SignInForm() {
     dispatch(googleSignInStart());
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -46,7 +44,7 @@ export default function SignInForm() {
       // the way switch works is similar to an if else statement: if (error.code === case) {
       // do action} if none of the strings matchg the code refer to default
       // NOTE: Google has not provided a list of these error codes
-      switch (error.code) {
+      switch (error) {
         case "auth/invalid-credential":
           alert("incorrect credentials");
           break;
@@ -59,49 +57,45 @@ export default function SignInForm() {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     //take this value and apply it to name
     setFormFields({ ...formFields, [name]: value });
   };
 
   return (
-    <SignUpContainer>
-      <H2>Already have an account?</H2>
+    <SignInContainer>
+      <h2>Already have an account?</h2>
       <span>Sign in with your email and password</span>
       <form onSubmit={handleSubmit}>
         <FormInput
           label="Email"
-          inputOptions={{
-            type: "email",
-            required: true,
-            onChange: handleChange,
-            name: "email",
-            value: email,
-          }}
+          type="email"
+          required
+          onChange={handleChange}
+          name="email"
+          value={email}
         />
 
         <FormInput
           label="Password"
-          inputOptions={{
-            type: "password",
-            required: true,
-            onChange: handleChange,
-            name: "password",
-            value: password,
-          }}
+          type="password"
+          required
+          onChange={handleChange}
+          name="password"
+          value={password}
         />
         <ButtonsContainer>
           <Button type="submit">Sign In</Button>
           <Button
-            type="button"
             buttonType={BUTTON_TYPE_CLASSES.google}
+            type="button"
             onClick={signInWithGoogle}
           >
-            Google Sign In
+            Sign In With Google
           </Button>
         </ButtonsContainer>
       </form>
-    </SignUpContainer>
+    </SignInContainer>
   );
 }
