@@ -1,8 +1,8 @@
-import { compose, createStore, applyMiddleware } from "redux";
+import { compose, createStore, applyMiddleware, Middleware } from "redux";
 import logger from "redux-logger";
 // Logger allows us to see what the state looks like before action dispatch what the action is, and what state looks like after
 import { rootReducer } from "./root-reducer";
-import { persistStore, persistReducer } from "redux-persist";
+import { persistStore, persistReducer, PersistConfig } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // import { thunk } from "redux-thunk";
 
@@ -11,8 +11,19 @@ import createSagaMiddleware from "redux-saga";
 
 import { rootSaga } from "./root-saga";
 
+export type RootState = ReturnType<typeof rootReducer>;
+
+declare global {
+  interface Window {
+    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
+  }
+}
+
+type ExtendedPersistConfig = PersistConfig<RootState> & {
+  whitelist: (keyof RootState)[];
+};
 // Redux Persist Config
-const persistConfig = {
+const persistConfig: ExtendedPersistConfig = {
   key: "root",
   // what do we want to store it into
   storage,
@@ -27,7 +38,7 @@ const middlewares = [
   import.meta.env.MODE === "development" && logger,
   // thunk,
   sagaMiddleware,
-].filter(Boolean); //'production' : will not log !
+].filter((middleWare): middleWare is Middleware => Boolean(middleWare)); //'production' : will not log !
 
 const composeEnhancer =
   (import.meta.env.MODE === "development" &&

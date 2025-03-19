@@ -2,9 +2,11 @@ import { createSelector } from "reselect";
 
 import { CategoriesState } from "./categories.reducer";
 import { CategoryMap } from "./categories.types";
+import { RootState } from "../store";
 // create selector memoizes selectors
 
-const selectCategoryReducer = (state): CategoriesState => state.categories;
+const selectCategoryReducer = (state: RootState): CategoriesState =>
+  state.categories;
 
 // 2 params: imput / export selector
 // input selector : what do i want as part of the params that im to use to prod what the selector will return back
