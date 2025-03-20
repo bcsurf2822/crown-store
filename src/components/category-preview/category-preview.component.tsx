@@ -3,13 +3,22 @@ import ProductCard from "../product-card/product-card.component";
 import {
   CategoryPreviewContainer,
   Preview,
-  TitleLink,
+  Title,
 } from "./category-preview.styles";
+import { CategoryItem } from "../../store/categories/categories.types";
+import { FC } from "react";
 
-export default function CategoryPreview({ title, products }) {
+type CategoryPreviewProps = {
+  title: string;
+  products: CategoryItem[];
+};
+
+const CategoryPreview: FC<CategoryPreviewProps> = ({ title, products }) => {
   return (
     <CategoryPreviewContainer>
-      <TitleLink to={title}>{title.toUpperCase()}</TitleLink>
+      <h2>
+        <Title to={title}>{title.toUpperCase()}</Title>
+      </h2>
       <Preview>
         {products
           .filter((_, idx) => idx < 4)
@@ -19,4 +28,6 @@ export default function CategoryPreview({ title, products }) {
       </Preview>
     </CategoryPreviewContainer>
   );
-}
+};
+
+export default CategoryPreview;
