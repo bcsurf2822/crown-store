@@ -10,14 +10,18 @@ import {
 } from "./cart-dropdown.styles.jsx";
 import { useSelector } from "react-redux";
 import { selectCartItems } from "../../store/cart/cart.selector.js";
+import { useCallback } from "react";
 
 export default function CartDropdown() {
   const cartItems = useSelector(selectCartItems);
   const navigate = useNavigate();
 
-  const goToCheckoutHandler = () => {
+
+
+  const goToCheckoutHandler = useCallback(() => {
     navigate("/checkout");
-  };
+  }, []); //adding navigate here could cause confusion (we don't need it)
+  //useCallback cuases this not to reinitialize every time
   return (
     <CartDropdownContainer>
       <CartItems>
