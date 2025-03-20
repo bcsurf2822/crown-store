@@ -3,11 +3,15 @@ import {
   BackgroundImage,
   Body,
   DirectoryItemContainer,
-  H2,
-  P,
 } from "./directory-item.styles";
+import { DirectoryCategory } from "../directory/directory.component";
+import { FC } from "react";
 
-export default function DirectoryItem({ category }) {
+type DirectoryItemProps = {
+  category: DirectoryCategory;
+};
+
+const DirectoryItem: FC<DirectoryItemProps> = ({ category }) => {
   const { imageUrl, title, route } = category;
   const navigate = useNavigate();
 
@@ -15,11 +19,13 @@ export default function DirectoryItem({ category }) {
 
   return (
     <DirectoryItemContainer onClick={onNavigateHandler}>
-      <BackgroundImage style={{ backgroundImage: `url(${imageUrl})` }} />
+      <BackgroundImage imageUrl={imageUrl} />
       <Body>
-        <H2>{title}</H2>
-        <P>Shop Now</P>
+        <h2>{title}</h2>
+        <p>Shop Now</p>
       </Body>
     </DirectoryItemContainer>
   );
-}
+};
+
+export default DirectoryItem;
