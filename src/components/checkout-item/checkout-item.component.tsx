@@ -1,27 +1,31 @@
+import { FC, memo } from "react";
 import {
   addItemToCart,
   clearItemFromCart,
   removeItemFromCart,
 } from "../../store/cart/cart.action.js";
-import { selectCartItems } from "../../store/cart/cart.selector.js";
+import { selectCartItems } from "../../store/cart/cart.selector";
+import { CartItem } from "../../store/cart/cart.types";
 import {
   Arrow,
+  BaseSpan,
   CheckoutImage,
   CheckoutItemContainer,
   ImageContainer,
-  Name,
-  Price,
   Quantity,
   RemoveButton,
   Value,
-} from "./checkout-item.styles.jsx";
+} from "./checkout-item.styles";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function CheckoutItem({ cartItem }) {
-  const dispatch = useDispatch();
-  const cartItems = useSelector(selectCartItems);
-  
+type CheckoutItemProps = {
+  cartItem: CartItem;
+};
+
+const CheckoutItem: FC<CheckoutItemProps> = memo(({ cartItem }) => {
   const { name, imageUrl, price, quantity } = cartItem;
+  const cartItems = useSelector(selectCartItems);
+  const dispatch = useDispatch();
 
   const clearItemHandler = () =>
     dispatch(clearItemFromCart(cartItems, cartItem));
@@ -32,16 +36,18 @@ export default function CheckoutItem({ cartItem }) {
   return (
     <CheckoutItemContainer>
       <ImageContainer>
-        <CheckoutImage src={imageUrl} alt={`${name}`} />
+        <img src={imageUrl} alt={`${name}`} />
       </ImageContainer>
-      <Name>{name}</Name>
-      <Quantity as="span">
+      <BaseSpan> {name} </BaseSpan>
+      <Quantity>
         <Arrow onClick={removeItemHandler}>&#10094;</Arrow>
-        <Value as="span">{quantity}</Value>
+        <Value>{quantity}</Value>
         <Arrow onClick={addItemHandler}>&#10095;</Arrow>
       </Quantity>
-      <Price as="span">{price}</Price>
+      <BaseSpan> {price}</BaseSpan>
       <RemoveButton onClick={clearItemHandler}>&#10005;</RemoveButton>
     </CheckoutItemContainer>
   );
-}
+});
+
+export default CheckoutItem;
